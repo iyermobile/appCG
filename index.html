@@ -48,7 +48,7 @@
     let chart;
 
     async function initDB() {
-      const worker = new Worker("https://cdn.jsdelivr.net/npm/sql.js-httpvfs/dist/sqljs-httpvfs.worker.js");
+      const worker = new Worker("https://cdn.jsdelivr.net/npm/sql.js-httpvfs@0.8.12/dist/sqlite.worker.js");
       const config = {
         serverMode: "full",
         requestChunkSize: 4096,
