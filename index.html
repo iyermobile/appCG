@@ -44,19 +44,45 @@
     <div id="results" class="row"></div>
   </div>
 
-  <script>
-    let db;
-    let chart;
 
-    async function initDB() {
-      const worker = new Worker("sqlite.worker.min.js");
-      const config = {
-        serverMode: "full",
-        requestChunkSize: 4096,
-        url: "https://app.chessgoogle.com/onthisday/public/db.sqlite3" // adjust path if needed
-      };
-      db = await window.SQLJSHTTPVFS.createDb(config, worker);
+<!-- 1. Ensure your script tag explicitly uses type="module" -->
+<script type="module">
+  // 2. Import the required function and configurations natively from a CDN
+  import { createDbWorker } from "https://jsdelivr.net";
+
+  let db;
+  let chart;
+
+  async function initDB() {
+    // 3. Keep your local worker file path mapping intact
+    const workerUrl = "sqlite.worker.min.js"; 
+    
+    // 4. Reference the corresponding .wasm binary explicitly from the CDN wrapper
+    const wasmUrl = "https://jsdelivr.net";
+
+    // 5. Build the array structure the library demands
+    const config = [
+      {
+        from: "inline",
+        config: {
+          serverMode: "full", // "full" expects a singular static database file 
+          requestChunkSize: 4096,
+          url: "https://chessgoogle.com"
+        }
+      }
+    ];
+
+    try {
+      // 6. Execute the proper entry method passing configs, worker path, and wasm binary path
+      const worker = await createDbWorker(config, workerUrl, wasmUrl);
+      
+      // The database context instance is exposed under .db
+      db = worker.db; 
+      console.log("Database initialized successfully!");
+    } catch (error) {
+      console.error("Failed to initialize database:", error);
     }
+  }
 
     async function queryWeather(month, day, location) {
       const stmt = db.prepare(`
